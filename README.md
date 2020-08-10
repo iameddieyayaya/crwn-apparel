@@ -6,7 +6,7 @@ e-commerce app w/ React + Firebase + Stripe + GraphQL
 
 ## Demo
 
-coming soon...not deployed.
+https://crwns-apparel.herokuapp.com/
 
 ## Available Scripts
 
