@@ -9,9 +9,10 @@ import SignInAndSignUpPage from './pages/sign-in-and-sign-up/SignInAndSignUpPage
 import CheckoutPage from './pages/checkout/Checkout'
 
 import Header from './components/header/Header'
-import { auth , createUserProfileDocument } from './firebase/firebase.utils'
+import { auth , createUserProfileDocument } from './firebase/firebase.utils' //addCollectionAndDocuments
 import { setCurrentUser } from './redux/user/user.actions'
 import { selectCurrentUser } from './redux/user/user.selector'
+// import { selectCollectionsForPreview } from './redux/shop/shop.selectors'
 
 import './app.css'
 
@@ -20,9 +21,10 @@ class App extends React.Component {
   unsubcribedFromAuth = null;;
 
   componentDidMount(){
+
     const { setCurrentUser } = this.props
 
-    auth.onAuthStateChanged(async userAuth => {
+    this.unsubcribedFromAuth = auth.onAuthStateChanged(async userAuth => {
 
       if(userAuth){
         const userRef = await createUserProfileDocument(userAuth)
@@ -36,6 +38,7 @@ class App extends React.Component {
       } else {
         //set user to null; 
         setCurrentUser(userAuth)
+        // addCollectionAndDocuments('collections', collectionsArray.map(({title, items}) => ({title, items})) )  //CODE WAS USED TO ADD DOCUMENT TO FIREBASE.
       }
     })
   }
@@ -61,7 +64,8 @@ class App extends React.Component {
 }
 
 const mapStateToProps = createStructuredSelector({
-  currentUser: selectCurrentUser
+  currentUser: selectCurrentUser,
+  // collectionsArray: selectCollectionsForPreview //CODE WAS USED TO ADD DOCUMENT TO FIREBASE.
 })
 
 const mapDispatchToProps = dispatch => ({

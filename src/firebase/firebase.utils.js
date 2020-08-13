@@ -14,6 +14,9 @@ const config = {
     measurementId: "G-N1YDCK2VBW"
   };
 
+  firebase.initializeApp(config);
+
+
   export const createUserProfileDocument = async (userAuth, additionalData) => {
       //no user - exit 
       if(!userAuth) return;
@@ -45,7 +48,42 @@ const config = {
       return userRef;
   }
 
-  firebase.initializeApp(config);
+  //function used to add collection/document to firebase. Without having to add every field manually.
+  export const addCollectionAndDocuments = async (
+    collectionKey,
+    objectsToAdd
+  ) => {
+    const collectionRef = firestore.collection(collectionKey);
+  
+    const batch = firestore.batch();
+    objectsToAdd.forEach(obj => {
+      const newDocRef = collectionRef.doc();
+      batch.set(newDocRef, obj);
+    });
+  
+    return await batch.commit();
+  };
+
+  //Grab collections data from firebase, @returns array of object; data.
+  // Sets title as object key.
+  export const convertCollectionsSnapshotToMap = (collections) => {
+    const transformedCollection = collections.docs.map(doc => {
+      const {title, items} = doc.data();
+
+      return {
+        routeName: encodeURI(title.toLowerCase()), //routes
+        id: doc.id, 
+        title,
+        items,
+      }
+    })
+
+    return transformedCollection.reduce((accum, collection) => {
+      accum[collection.title.toLowerCase()] = collection;
+      return accum;
+    }, {})
+
+  } 
 
   export const auth = firebase.auth();
   export const firestore = firebase.firestore();
