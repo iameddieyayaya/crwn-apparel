@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Route, Switch, Redirect} from 'react-router-dom'
 import { connect } from 'react-redux'
 import { createStructuredSelector } from 'reselect'
@@ -16,15 +16,13 @@ import { selectCurrentUser } from './redux/user/user.selector'
 
 import './app.css'
 
-class App extends React.Component {
+const App = ({setCurrentUser, currentUser}) =>  {
 
-  unsubcribedFromAuth = null;;
 
-  componentDidMount(){
+  useEffect(() => {
 
-    const { setCurrentUser } = this.props
 
-    this.unsubcribedFromAuth = auth.onAuthStateChanged(async userAuth => {
+    auth.onAuthStateChanged(async userAuth => {
 
       if(userAuth){
         const userRef = await createUserProfileDocument(userAuth)
@@ -41,13 +39,9 @@ class App extends React.Component {
         // addCollectionAndDocuments('collections', collectionsArray.map(({title, items}) => ({title, items})) )  //CODE WAS USED TO ADD DOCUMENT TO FIREBASE.
       }
     })
-  }
+  }, [setCurrentUser])
 
-  componentWillUnmount(){
-    this.unsubcribedFromAuth();
-  }
 
-  render() {
     return (
       <div className="App">
           <Header />
@@ -55,11 +49,10 @@ class App extends React.Component {
             <Route exact path="/" component={HomePage} />
             <Route path="/shop" component={ShopPage} />
             <Route exact path="/checkout" component={CheckoutPage} />
-            <Route exact path="/signin" render={() => this.props.currentUser ? (<Redirect to="/" />) : <SignInAndSignUpPage /> } />
+            <Route exact path="/signin" render={() => currentUser ? (<Redirect to="/" />) : <SignInAndSignUpPage /> } />
           </Switch>
       </div>
     );
-  }
 
 }
 
